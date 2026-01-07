@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Comment Bubbles MVP</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-left">
+        <h1>Comment Bubbles MVP</h1>
+        <div class="muted">Dummy showcase: deterministic mock embeddings + labeling</div>
+      </div>
+      <div class="header-right">
+        <button id="rawToggle" class="btn">Raw mode: Off</button>
+      </div>
+    </header>
+
+    <section class="composer">
+      <div class="card">
+        <h2>Create Post</h2>
+        <div class="grid">
+          <label>Title</label>
+          <input id="postTitle" type="text" value="Demo: Comments → Bubbles Over Time" />
+          <label>Body</label>
+          <textarea id="postBody" rows="3">Try adding comments that mix different themes. Click bubbles to drill into the clustered comments.</textarea>
+        </div>
+        <div class="row">
+          <button id="createPostBtn" class="btn primary">Create Post</button>
+          <div id="postMeta" class="muted"></div>
+        </div>
+      </div>
+    </section>
+
+    <main class="main">
+      <section class="col col-left">
+        <div class="card">
+          <h2>Add Comment</h2>
+          <div class="grid">
+            <label>Author name</label>
+            <input id="authorName" type="text" value="You" />
+            <label>Comment</label>
+            <textarea id="commentText" rows="4" placeholder="Write a comment..."></textarea>
+          </div>
+          <div class="row">
+            <button id="addCommentBtn" class="btn primary">Add Comment</button>
+            <div id="status" class="muted"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Chronological Feed</h2>
+          <div id="commentFeed" class="feed"></div>
+        </div>
+      </section>
+
+      <section class="col col-center">
+        <div class="card">
+          <div class="row between">
+            <h2>Bubble Timeline</h2>
+            <div class="muted">Click a bubble to inspect</div>
+          </div>
+          <div id="timeline" class="timeline"></div>
+        </div>
+      </section>
+
+      <section class="col col-right">
+        <div class="card">
+          <h2>Bubble Inspector</h2>
+          <div id="inspector" class="inspector muted">Create a post and add comments, then click a bubble.</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
