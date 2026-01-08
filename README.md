@@ -1,740 +1,306 @@
-# Comment Bubbles MVP (Dummy Showcase)
+# Comment Bubbles MVP
 
-A small FastAPI app that demonstrates:
+A FastAPI application that demonstrates real-time comment clustering and visualization. Comments are automatically embedded, clustered into semantic "bubbles," labeled with AI-generated summaries, and classified by sentiment (agree/disagree/pass).
 
-- Create a post
-- Add comments
-- Comments are embedded (deterministic mock), clustered into bubbles, and labeled (deterministic mock)
-- Click bubbles to drill into underlying comments
-- Bubble timeline updates as comments arrive
+## Features
 
-This is a **dummy showcase**: the pipeline is real and end-to-end runnable, but embeddings and labeling are mocked for determinism.
+- **Real-time clustering**: Comments are automatically grouped into semantic bubbles as they arrive
+- **GPT-powered**: Uses OpenAI embeddings (`text-embedding-3-small`) and GPT-4o-mini for labeling and sentiment classification
+- **Temporal visualization**: Interactive timeline showing bubble evolution over time
+- **Voting classification**: Each comment is classified as "agree", "disagree", or "pass" relative to the post
+- **Multi-post support**: Manage multiple conversations with easy switching
+- **Reddit import**: Import Reddit threads from text files
+- **Comprehensive evaluation**: Detailed analysis of clustering decisions and recommendations
+- **Parallel processing**: Batch embedding generation for faster imports
 
 ## Requirements
 
-- Python 3.11+ recommended
+- Python 3.11+
+- OpenAI API key (set in `.env` file as `GPT_KEY`)
 
-## Run
+## Setup
 
 ```bash
+# Create virtual environment
 python -m venv .venv
-. .venv/bin/activate
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -U pip
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+
+# Create .env file with your OpenAI API key
+echo "GPT_KEY=your-api-key-here" > .env
+
+# Run the server
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open:
-
-- http://127.0.0.1:8000
-
-## API
-
-- `POST /api/posts` { "title": "...", "body": "..." }
-- `POST /api/posts/{post_id}/comments` { "author": {"id":"...", "display_name":"..."}, "text":"...", "reply_to_comment_id": null }
-- `GET /api/posts/{post_id}/state`
-
-## Notes
-
-- In-memory store only. Restart resets state.
-- Deterministic mock embeddings and labeling for consistent demos.
-
-# Idea
-
-What’s been tried (and where it tends to break)
-1) Classic threaded comments (tree + “most relevant” sorting)
-
-What it solves: basic reply structure.
-Where it fails: readers don’t want to traverse a deep tree; topics/arguments fork and intertwine; temporal order and topical order conflict. This is why “conversation disentanglement” is a whole research area: even identifying which sub-thread a comment “belongs to” is non-trivial in messy, real-world dialogue. 
-arxiv.org
-+2
-jyunyu.csie.org
-+2
-
-Implication for your idea: you’re explicitly fixing the “topic vs time vs reply” mismatch by adding an abstraction layer (clusters/categories) while conserving the raw comments.
-
-2) Argument mapping (Kialo-style pro/con trees)
-
-What it solves: clean logical structure; great for debate and pedagogy. 
-Kialo
-+1
-
-Where it fails as a general social feature: requires users to author in the structure (turn every contribution into a claim, attach it as pro/con, keep it coherent). That’s heavy friction unless the community is explicitly doing structured debate.
-
-Implication: your system should not require structured authoring. Let people comment normally; the structure is inferred.
-
-3) Opinion-space mapping (Pol.is)
-
-What it solves: turns many statements into clusters by collecting votes (agree/disagree/pass) and projecting participants/statements into an opinion landscape. 
-gwern.net
-+1
-
-Where it fails for “comments under a post”:
-
-It’s a different interaction primitive: people must vote repeatedly; statements are short; it’s closer to deliberation/survey than free-form conversation. 
-lesswrong.com
-+1
-
-Even fans complain the visualization can be confusing (axes/meaning unclear), which matters if you want this to be mainstream UX. 
-GitHub
-
-Implication: you want Pol.is-like clarity (clusters + exploration) without requiring voting as the core mechanic.
-
-4) Recursive summarization systems (Wikum)
-
-What it solves: scalable sensemaking by producing layered summaries of large discussions, while keeping drill-down to original comments. 
-people.csail.mit.edu
-+1
-
-Where it fails for an MVP social feature: it relies on editorial workflow/human-in-the-loop “summarizers,” which is hard to ship as a default commenting UI.
-
-Implication: steal the interaction contract (“summary you can drill into”), but automate most of it and only ask humans for lightweight corrections.
-
-5) “Fix the comments” publisher platforms (Civil Comments, Coral/Talk)
-
-What they solved: moderation + civility + newsroom workflows, not semantic organization. Civil Comments ultimately shut down (Dec 2017), and the ecosystem heavily emphasizes the operational cost and difficulty of keeping comment spaces healthy. 
-Digital Content Next
-+3
-Coral by Vox Media Guides
-+3
-huggingface.co
-+3
-
-Also, “real names” or switching platforms often didn’t magically improve quality. 
-Nieman Reports
-
-Implication: if your feature increases engagement, it will also increase moderation exposure—so the MVP should include at least basic safety/misuse handling and “don’t misrepresent people” safeguards.
-
-6) “Everything app” collaboration UIs (Google Wave lesson)
-
-Wave is a canonical example of “too many affordances, not enough guidance,” leading to adoption failure; it also had network effects issues (useful only if others adopt). 
-arstechnica.com
-+1
-
-Implication: your MVP must be one obvious workflow: “read the post → see the evolving map of interpretations → drill down → optionally correct.”
-
-Why many attempts fail (compressed into design constraints)
-
-Friction kills: if users must learn a formalism (argument maps) or do extra work (voting a lot), adoption drops.
-
-Abstraction betrayal: if a cluster label misrepresents someone’s comment, users lose trust quickly.
-
-Ambiguity is real: many comments belong to multiple themes; forcing single-category assignment feels wrong.
-
-Concept drift over time: early clusters change meaning as new comments arrive; your UI must show evolution without gaslighting.
-
-Moderation load scales: any system that surfaces “hot clusters” can amplify conflict unless you design throttles and safety defaults. 
-Digital Content Next
-+1
-
-A better proposal (your idea, tightened into an MVP-ready concept)
-Core object: “Interpretation Bubbles” over time
-
-Each bubble is a category created from comments: a short label + a 1–3 sentence “essence” (hypothesis/impression/argument) + optional facets (stance, emotion, asked-question, evidence-cited).
-
-The raw comments are conserved and always reachable (click bubble → list comments).
-
-The system is explicitly temporal: bubbles appear, grow, split, merge, fade.
-
-Key upgrade vs. prior art
-
-Unlike Kialo, structure is inferred.
-
-Unlike Pol.is, no voting is required (though you can optionally add quick reactions later).
-
-Unlike Wikum, no editorial labor is required (but you allow micro-corrections).
-
-Unlike standard threads, you provide a “map-first” reading mode.
-
-MVP feature set (minimum to ship something testable)
-A) Input
-
-Create a post (title + body).
-
-Add comments (free text). Replies are allowed, but MVP can treat them as just comments with a reply_to pointer.
-
-B) Live abstraction pipeline (simple, cheap, explainable)
-
-Embed each comment (local embedding model or API; MVP decision).
-
-Online clustering into bubbles (incremental algorithm; allow “soft membership” later, but MVP can start with single assignment + “also relates to” suggestions).
-
-LLM labeling for each bubble:
-
-label: 3–7 words
-
-essence: 1–3 sentences
-
-why_included: bullet list of 2–4 representative paraphrases
-
-representative_comments: 3–5 comment ids (for audit/drill-down)
-
-Temporal linking between bubble versions:
-
-bubble at time t links to bubble at time t+1 if centroid similarity is high
-
-detect split/merge events and show them in UI
-
-This “cluster → label → provenance” pattern is a known approach in long-discussion summarization work (cluster + generative labeling), and it maps well to your bubbles. 
-downloads.webis.de
-
-C) UI (the “dummy interface” behavior you asked for)
-
-You want one screen with four panes:
-
-Post composer / post view (top)
-
-Comment entry + chronological feed (left)
-
-Bubble map timeline (center)
-
-X-axis = time (or comment index)
-
-bubbles positioned by semantic similarity (2D layout) or simply stacked lanes (safer for MVP)
-
-bubble size = number of comments / recent activity
-
-edges show bubble continuity; split/merge shown as branch/join
-
-Bubble inspector (right)
-
-label + essence
-
-“top comments” list (click opens full text + permalink)
-
-“what changed” since last version (new subtheme emerged, split reason, etc.)
-
-User correction controls (MVP-critical for trust):
-
-“This label is wrong” → propose 2 alternative labels (LLM) + allow manual rename
-
-“Move this comment” → reassign comment to another bubble
-
-“Pin this comment as representative”
-
-D) Trust & safety defaults (light but non-optional)
-
-Every bubble shows provenance: “based on these 3 representative comments” (clickable).
-
-A “Raw mode” toggle: chronological-only (no abstraction).
-
-If labeling confidence is low, show “Uncertain” bubble or delay labeling until N≥k comments.
-
-Rate limit “hot cluster” amplification (avoid turning it into a rage amplifier).
-
-The temporal graph model (data you’ll actually need)
-
-A practical MVP graph:
-
-Comment
-
-id, author_id(optional), created_at, text, reply_to(optional)
-
-embedding
-
-BubbleVersion
-
-id, bubble_id, created_at_window
-
-label, essence
-
-comment_ids
-
-representative_comment_ids
-
-centroid_embedding
-
-Edges
-
-bubble_version_id -> bubble_version_id with type: continue|split_from|merge_from
-
-weight = similarity / overlap
-
-This avoids overcomplicating: you’re versioning bubbles over time instead of trying to keep one bubble object that mutates invisibly.
-
-What to test in the MVP (so you know it’s working)
-
-Navigation time: can a new reader answer “what are people saying?” faster than scrolling?
-
-Fidelity complaints: how often do users say “this bubble misrepresents me?”
-
-Stability: do labels thrash as new comments arrive? (Track rename rate + split/merge rate.)
-
-Drill-down usage: do users actually open comments from bubbles (and do they trust what they see)?
-
-The one design choice that will decide if it feels “real”
-
-Make correction cheap and visible. The fastest path to trust is:
-
-“Here’s the abstraction”
-
-“Here’s exactly what it was derived from”
-
-“Fix it in one click”
-
-That’s the bridge between “LLM made up a category” and “community-validated map of the conversation.”
-
-0) Summary: objectives, goals, subgoals
-Objective
-
-Build a dummy showcase UI that demonstrates “comments → evolving bubble categories over time” for a single post, where:
-
-Users can create a post and add comments.
-
-Comments are clustered into “bubbles” as they arrive.
-
-Each bubble shows an LLM-generated label + essence (can be mocked), and clicking a bubble reveals the underlying comments.
-
-The underlying data structures and the end-to-end workflow (ingest → embed → cluster → label → render) are real and runnable.
-
-Goals
-
-Demonstrate the interaction: map-first view of discussion with drill-down to raw comments.
-
-Show temporal evolution: bubbles appear/grow; optionally split/merge.
-
-Preserve provenance: every bubble shows which comments it summarizes.
-
-Subgoals
-
-Provide a clean API boundary so the “model parts” can later be swapped from mocked → real LLM/embeddings.
-
-Keep the MVP minimal: single post, single page, simple clustering, simple timeline layout.
-
-Non-goals (explicit)
-
-Production-grade moderation, scalability, auth, multi-post feeds, real-time multi-user sync, perfect clustering quality, perfect summarization quality.
-
-1) MVP scope: what engineers must implement
-User-visible features (MVP)
-
-Post composer
-
-Title + body → “Create Post”
-
-Comment entry
-
-Text input → “Add Comment”
-
-Visualization
-
-A “bubble timeline” panel that updates as comments are added.
-
-Bubble size reflects comment count.
-
-Bubble label + essence displayed.
-
-Bubble drill-down
-
-Click bubble → show list of comments in bubble.
-
-Show representative comments used for label.
-
-Raw mode toggle
-
-Toggle: “Raw chronological feed only” vs “Map view”
-
-Minimal correctness requirements
-
-Every added comment goes through the pipeline:
-
-Comment created
-
-embedding produced (can be fake but deterministic)
-
-comment assigned to a cluster/bubble
-
-bubble version updated
-
-bubble label/essence generated (can be mocked but deterministic + derived from comments)
-
-UI renders updated state
-
-2) System architecture (dummy showcase)
-Recommended architecture (simple, robust for MVP)
-
-Single-process backend + frontend (separation keeps it realistic and extensible):
-
-Frontend (React / Next.js or plain React)
-
-Renders post, comments, bubble timeline, inspector.
-
-Subscribes to state updates via polling or SSE/WebSocket.
-
-Backend (Node/Express or FastAPI)
-
-Holds in-memory state for the post.
-
-Runs the pipeline on each new comment.
-
-Exposes API endpoints for create post, add comment, fetch state.
-
-If you want ultra-minimal: you can do everything in the frontend with in-memory state, but still implement the pipeline modules as if they were “services” with clear interfaces.
-
-3) Data model (canonical, must be implemented as-is)
-IDs and time
-
-IDs: UUIDv4 strings.
-
-Time: ISO-8601 strings (UTC), e.g. "2026-01-07T20:55:00Z".
-
-3.1 Core entities
-Post
-{
-  "id": "uuid",
-  "created_at": "iso",
-  "title": "string",
-  "body": "string"
-}
-
-Comment
+Open http://127.0.0.1:8000 in your browser.
+
+## API Endpoints
+
+### Posts
+- `GET /api/posts/list` - List all available posts
+- `POST /api/posts` - Create a new post
+  ```json
+  {
+    "title": "Post title",
+    "body": "Post body text",
+    "created_at": "2024-01-01T00:00:00Z"  // optional
+  }
+  ```
+- `GET /api/posts/{post_id}/state` - Get full state for a post
+- `POST /api/posts/{post_id}/load` - Load a post as current
+- `GET /api/current-state` - Get current post state
+- `GET /api/posts/{post_id}/evaluate` - Get detailed evaluation report
+
+### Comments
+- `POST /api/posts/{post_id}/comments` - Add a comment
+  ```json
+  {
+    "author": {
+      "id": "user-id",
+      "display_name": "Display Name"
+    },
+    "text": "Comment text",
+    "reply_to_comment_id": "uuid-or-null",
+    "created_at": "2024-01-01T00:00:00Z",  // optional
+    "embedding": {  // optional, for pre-computed embeddings
+      "vector": [...],
+      "dim": 1536,
+      "model": "text-embedding-3-small",
+      "hash": "..."
+    }
+  }
+  ```
+
+## Data Model
+
+### Comment
+```json
 {
   "id": "uuid",
   "post_id": "uuid",
-  "created_at": "iso",
+  "created_at": "iso-8601",
   "author": { "id": "string", "display_name": "string" },
   "text": "string",
   "reply_to_comment_id": "uuid|null",
-
-  "embedding": { "vector": "number[]", "dim": "number", "model": "string", "hash": "string" },
-
+  "embedding": {
+    "vector": [0.1, 0.2, ...],
+    "dim": 1536,
+    "model": "text-embedding-3-small",
+    "hash": "sha256-hex"
+  },
   "assigned_bubble_id": "uuid|null",
-  "assigned_bubble_version_id": "uuid|null"
+  "assigned_bubble_version_id": "uuid|null",
+  "vote": "agree|disagree|pass|null"
 }
+```
 
-
-embedding.hash is a stable hash of (model + text) so you can cache and keep determinism in the demo.
-
-Bubble (stable identity)
-{
-  "id": "uuid",
-  "post_id": "uuid",
-  "created_at": "iso",
-  "is_active": true
-}
-
-BubbleVersion (time-sliced snapshot used by UI)
+### BubbleVersion
+```json
 {
   "id": "uuid",
   "bubble_id": "uuid",
   "post_id": "uuid",
-
-  "created_at": "iso",
-  "window": { "start_at": "iso", "end_at": "iso" },
-
+  "created_at": "iso-8601",
+  "window": { "start_at": "iso-8601", "end_at": "iso-8601" },
   "label": "string",
   "essence": "string",
-  "confidence": "number",
-
+  "confidence": 0.0-1.0,
   "comment_ids": ["uuid"],
   "representative_comment_ids": ["uuid"],
-
-  "centroid_embedding": { "vector": "number[]", "dim": "number", "model": "string", "hash": "string" }
+  "centroid_embedding": { ... }
 }
-
-BubbleEdge (temporal graph)
-{
-  "id": "uuid",
-  "post_id": "uuid",
-  "from_bubble_version_id": "uuid",
-  "to_bubble_version_id": "uuid",
-  "type": "continue|split_from|merge_from",
-  "weight": "number"
-}
-
-3.2 View model (what frontend consumes)
-PostState (single payload to render everything)
-{
-  "post": { "...": "Post" },
-  "comments": ["Comment"],
-  "bubbles": ["Bubble"],
-  "bubble_versions": ["BubbleVersion"],
-  "bubble_edges": ["BubbleEdge"],
-  "ui_hints": {
-    "layout": {
-      "bubble_version_positions": {
-        "<bubble_version_id>": { "lane": "number", "t": "number", "size": "number" }
-      }
-    }
-  }
-}
-
-
-t is a normalized timeline coordinate (e.g., comment index or seconds since start).
-
-lane is an integer row for a simple, stable MVP layout (avoid UMAP/TSNE for the demo).
-
-4) Pipeline modules (interfaces + responsibilities)
-
-Implement these as swappable components with the same input/output types.
-
-4.1 EmbeddingProvider
-
-Input: comment.text
-Output: Embedding (vector + metadata)
-
-MVP implementation options:
-
-Deterministic fake embedding: hash text → seeded PRNG → fixed-dim vector (fast, no deps).
-
-Local embedding model (optional): e.g., a small sentence transformer.
-
-Remote embedding API (optional): behind config.
-
-Contract
-
-Same input text must produce identical embedding when model unchanged.
-
-Dim fixed, e.g. 64 or 128 for the demo.
-
-4.2 Clusterer (online / incremental)
-
-Input: existing bubbles + bubble_versions + new comment embedding
-Output: assignment decision + updated bubbles/bubble_versions/edges
-
-MVP algorithm (simple, deterministic):
-
-Compute similarity between comment embedding and each active bubble’s latest centroid.
-
-If best similarity ≥ ASSIGN_THRESHOLD, assign to that bubble.
-
-Else create a new bubble.
-
-Recompute centroid for the bubble version.
-
-Required parameters
-
-ASSIGN_THRESHOLD: e.g. cosine similarity ≥ 0.72 (tune for demo).
-
-MIN_BUBBLE_SIZE_FOR_LABEL: e.g. 2 comments before labeling confidently.
-
-Optional split/merge detection (nice-to-have, can be simplified):
-
-Split: if bubble becomes internally incoherent (avg similarity to centroid drops below SPLIT_THRESHOLD), run a 2-means on its comments and create two bubbles.
-
-Merge: if two bubble centroids become too similar (≥ MERGE_THRESHOLD), merge.
-
-For MVP, you can skip split/merge and only do create/grow, but still keep BubbleEdge data model (edges just “continue”).
-
-4.3 Labeler (LLM-backed or mocked)
-
-Input: comments in bubble (or representative subset)
-Output: {label, essence, confidence, representative_comment_ids}
-
-MVP implementations:
-
-Mock labeler (deterministic):
-
-Extract keywords (TF-IDF-like) from bubble comments.
-
-label = top 3 keywords in Title Case.
-
-essence = template: “People are discussing X, focusing on Y and Z.”
-
-confidence = min(1, log(1+n)/k) or similar.
-
-Real LLM labeler (later):
-
-Prompt with 3–8 representative comments and ask for label + essence + reps.
-
-Hard requirement
-
-Output must cite representative_comment_ids that exist in comment_ids.
-
-5) End-to-end workflow (event-driven, must run)
-5.1 Ingest comment: canonical sequence
-
-When user submits a new comment:
-
-Create Comment (id, timestamps, text, reply_to).
-
-EmbeddingProvider.embed(text) → store comment.embedding.
-
-Clusterer.assign(comment.embedding):
-
-Decide bubble (existing or new).
-
-Create new BubbleVersion for the affected bubble (append-only).
-
-Create BubbleEdge from previous version → new version (type=continue, weight=similarity).
-
-Labeler.label(bubble_version.comment_ids):
-
-Fill in label, essence, confidence, representative_comment_ids.
-
-Update comment.assigned_bubble_id and comment.assigned_bubble_version_id.
-
-Emit updated PostState (or delta event) to frontend.
-
-5.2 State update transport
-
-Pick one:
-
-Polling: frontend polls GET /state after each action (simplest).
-
-SSE: backend pushes post_state_updated events.
-
-WebSocket: overkill for MVP unless you want it.
-
-For dummy showcase, polling is fine.
-
-6) API specification (if using a backend)
-6.1 Endpoints
-Create post
-
-POST /api/posts
-
-{ "title": "string", "body": "string" }
-
-
-Response: PostState (empty comments)
-
-Add comment
-
-POST /api/posts/{post_id}/comments
-
-{ "author": { "id": "string", "display_name": "string" }, "text": "string", "reply_to_comment_id": "uuid|null" }
-
-
-Response: PostState (updated)
-
-Get state
-
-GET /api/posts/{post_id}/state
-Response: PostState
-
-6.2 Error cases (MVP)
-
-404 post not found
-
-400 empty title/body/comment
-
-400 reply_to_comment_id invalid
-
-7) UI specification (dummy but precise)
-Layout (single page)
-
-Header
-
-Post title/body
-
-“New Post” button (resets state)
-
-Left column
-
-Comment composer
-
-Chronological comment feed (always visible)
-
-Center column
-
-Bubble timeline visualization
-
-Each bubble version rendered as a node
-
-Edges between versions rendered as lines
-
-Right column
-
-Bubble inspector (selected bubble version)
-
-Shows label, essence, counts, rep comments, full list of comments
-
-Bubble timeline rendering rules (lane-based, stable)
-
-t coordinate = comment index of the latest comment in that bubble version.
-
-lane assignment:
-
-Keep bubble in same lane across versions.
-
-New bubbles go to the next free lane.
-
-size = sqrt(#comments_in_bubble) or linear.
-
-Interaction
-
-Clicking a bubble version sets selected_bubble_version_id.
-
-Inspector shows:
-
-label, essence, confidence
-
-representative comments (full text)
-
-all comment texts in the bubble
-
-Toggle “Raw mode”:
-
-hides timeline + inspector; shows only chronological feed.
-
-8) Determinism and “demo modes”
-
-Implement a config switch:
-
-DemoMode = MOCKED
-
-Fake deterministic embeddings
-
-Mock deterministic labeling
-
-Clustering deterministic
-
-DemoMode = LIVE (optional later)
-
-Real embeddings + real LLM labeling
-
-The MVP should ship with MOCKED working out of the box.
-
-9) Logging + provenance (MVP minimal)
-
-For each comment ingest, append a PipelineRun record (in memory) for debugging:
-
-{
-  "id": "uuid",
-  "post_id": "uuid",
-  "comment_id": "uuid",
-  "created_at": "iso",
-  "embedding_model": "string",
-  "cluster_decision": {
-    "assigned_bubble_id": "uuid",
-    "similarity_to_assigned": "number",
-    "threshold": "number",
-    "created_new_bubble": "boolean"
-  },
-  "labeler": {
-    "mode": "mocked|live",
-    "representative_comment_ids": ["uuid"]
-  }
-}
-
-
-Not required for UI, but makes the demo credible and debuggable.
-
-10) Acceptance criteria (engineers can test against this)
-
-Create post → state loads with empty comments and no bubbles.
-
-Add 1 comment:
-
-comment has embedding
-
-one bubble exists
-
-one bubble version exists with that comment id
-
-label/essence filled (even if low confidence)
-
-Add 10 comments with mixed topics:
-
-multiple bubbles created
-
-each new comment assigned exactly one bubble
-
-bubble timeline updates after each comment
-
-Clicking a bubble shows only the comments assigned to it.
-
-Provenance is consistent:
-
-every representative_comment_id is in that bubble version’s comment_ids.
+```
+
+## Pipeline Architecture
+
+### 1. Embedding Provider (`app/pipeline/embedding.py`)
+- **Implementation**: `GPTEmbeddingProvider` using OpenAI `text-embedding-3-small`
+- **Dimension**: 1536
+- **Features**: Batch embedding support for parallel processing
+- **Caching**: Embeddings are hashed for consistency
+
+### 2. Clusterer (`app/pipeline/clusterer.py`)
+- **Algorithm**: Online incremental clustering
+- **Threshold**: 0.58 (cosine similarity)
+- **Behavior**: Assigns comments to existing bubbles or creates new ones
+- **Centroid**: Recalculated for each bubble version
+
+### 3. Labeler (`app/pipeline/labeler.py`)
+- **Implementation**: `GPTLabeler` using GPT-4o-mini
+- **Output**: Label (2-4 words), essence (1-2 sentences), confidence score
+- **Representatives**: Selects 3-5 representative comments per bubble
+
+### 4. Voter (`app/pipeline/voter.py`)
+- **Implementation**: `GPTVoter` using GPT-4o-mini
+- **Classification**: "agree", "disagree", or "pass" relative to the post
+- **Purpose**: Sentiment analysis for understanding comment stance
+
+## Evaluation System
+
+The system includes comprehensive evaluation tools to analyze clustering quality:
+
+### Evaluation Script
+```bash
+python evaluate_system.py <post_id> [threshold]
+```
+
+### Evaluation Features
+- **Clustering Decisions**: Analysis of each assignment decision with similarity scores
+- **Bubble Analysis**: Cohesion, similarity ranges, potential merges/splits
+- **Threshold Analysis**: Optimal threshold recommendations
+- **Recommendations**: Actionable suggestions for improvement
+- **Voting Analysis**: Distribution of agree/disagree/pass across bubbles
+
+### Metrics Calculated
+- Clustering: Silhouette score, cohesion, separation, entropy
+- Labeling: Uniqueness, coverage, confidence
+- Temporal: Creation rate, stability, coherence
+- System: Processing time, API calls
+
+## Reddit Import
+
+Import Reddit threads from text files:
+
+```bash
+# Sequential import
+python test_reddit_import.py tests.txt
+
+# Parallel import (faster, pre-embeds in batches)
+python test_reddit_import_parallel.py tests.txt [batch_size]
+```
+
+The parser extracts:
+- Post title and body
+- Comments with authors and timestamps
+- Reply relationships
+- Relative time parsing ("1y ago", "10mo ago", etc.)
+
+## UI Features
+
+### Timeline Visualization
+- **Lane-based layout**: Bubbles arranged in stable lanes
+- **Temporal positioning**: X-axis represents time progression
+- **Size encoding**: Bubble size reflects comment count
+- **Vote summaries**: Shows agree/disagree/pass counts on each bubble
+- **Confidence indicators**: Color-coded confidence scores
+
+### Bubble Inspector
+- Label and essence display
+- Vote distribution breakdown
+- Representative comments
+- Full comment list with voting badges
+- Metadata (confidence, window, bubble ID)
+
+### Comment Feed
+- Chronological display
+- Vote badges (color-coded: green=agree, red=disagree, gray=pass)
+- Bubble assignment indicators
+- Author and timestamp information
+
+## Configuration
+
+### Pipeline Config (`app/pipeline/orchestrator.py`)
+- `assign_threshold`: 0.58 (cosine similarity threshold)
+- `embedding_model`: "text-embedding-3-small"
+- `embedding_dim`: 1536
+- `labeler_mode`: "live" (GPT-based)
+
+### Environment Variables
+- `GPT_KEY`: OpenAI API key (required)
+
+## Testing
+
+### Run Tests
+```bash
+python run_tests.py
+```
+
+This will:
+1. Import a Reddit thread
+2. Calculate metrics
+3. Generate evaluation reports
+4. Capture screenshots
+
+### Manual Testing
+1. Create a post via UI or API
+2. Add comments (manually or via import)
+3. Observe bubble formation in timeline
+4. Click bubbles to inspect details
+5. Use evaluation endpoint to analyze quality
+
+## Project Structure
+
+```
+bubblers/
+├── app/
+│   ├── main.py              # FastAPI application
+│   ├── models.py            # Data models
+│   ├── store.py             # In-memory data store
+│   ├── utils.py             # Utility functions
+│   ├── metrics.py           # Metrics calculation
+│   ├── evaluation.py         # Detailed evaluation system
+│   ├── reddit_parser.py      # Reddit thread parser
+│   ├── pipeline/
+│   │   ├── orchestrator.py  # Main pipeline coordinator
+│   │   ├── embedding.py      # GPT embedding provider
+│   │   ├── clusterer.py     # Online clustering
+│   │   ├── labeler.py       # GPT labeler
+│   │   └── voter.py          # Sentiment classifier
+│   └── static/
+│       ├── index.html        # Frontend HTML
+│       ├── app.js            # Frontend JavaScript
+│       └── styles.css        # Styling
+├── evaluate_system.py        # Evaluation CLI tool
+├── test_reddit_import.py     # Sequential Reddit import
+├── test_reddit_import_parallel.py  # Parallel Reddit import
+├── run_tests.py              # Test runner
+└── requirements.txt          # Dependencies
+```
+
+## Key Design Decisions
+
+### Online Clustering
+- Incremental algorithm processes comments one at a time
+- Maintains state across comment additions
+- Creates new bubbles when similarity is below threshold
+
+### Temporal Versioning
+- Each bubble update creates a new `BubbleVersion`
+- Preserves history through `BubbleEdge` relationships
+- Enables visualization of bubble evolution
+
+### Provenance
+- Every bubble shows representative comments
+- Full comment list always accessible
+- Evaluation system provides transparency into decisions
+
+### Voting Classification
+- Automatic sentiment analysis relative to post
+- Enables understanding of agreement/disagreement patterns
+- Visual indicators in UI for quick scanning
+
+## Limitations
+
+- **In-memory storage**: Data is lost on server restart
+- **Single-threaded processing**: Comments processed sequentially (clustering requires state)
+- **No persistence**: No database backend (MVP scope)
+- **No authentication**: All operations are open
+- **Rate limiting**: Subject to OpenAI API rate limits
+
+## Future Enhancements
+
+- Database persistence
+- Real-time updates via WebSocket
+- User corrections for bubble labels
+- Split/merge detection algorithms
+- Advanced visualization (2D layout, force-directed graphs)
+- Multi-language support
+- Export/import functionality
+
+## License
+
+See project files for license information.

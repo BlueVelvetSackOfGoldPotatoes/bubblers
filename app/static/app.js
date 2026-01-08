@@ -5,11 +5,18 @@ let rawMode = false;
 const els = {
   postTitle: document.getElementById("postTitle"),
   postBody: document.getElementById("postBody"),
+  postCreatedAt: document.getElementById("postCreatedAt"),
+  postAdvancedToggle: document.getElementById("postAdvancedToggle"),
+  postAdvanced: document.getElementById("postAdvanced"),
   createPostBtn: document.getElementById("createPostBtn"),
   postMeta: document.getElementById("postMeta"),
+  postSelector: document.getElementById("postSelector"),
 
   authorName: document.getElementById("authorName"),
   commentText: document.getElementById("commentText"),
+  commentCreatedAt: document.getElementById("commentCreatedAt"),
+  commentAdvancedToggle: document.getElementById("commentAdvancedToggle"),
+  commentAdvanced: document.getElementById("commentAdvanced"),
   addCommentBtn: document.getElementById("addCommentBtn"),
   status: document.getElementById("status"),
 
@@ -21,7 +28,8 @@ const els = {
 };
 
 function esc(s) {
-  return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  if (typeof s !== "string") return "";
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function fmtTime(iso) {
@@ -33,13 +41,28 @@ function fmtTime(iso) {
   }
 }
 
+function datetimeLocalToISO(datetimeLocal) {
+  if (!datetimeLocal) return null;
+  const dt = new Date(datetimeLocal);
+  if (isNaN(dt.getTime())) return null;
+  return dt.toISOString();
+}
+
 async function createPost() {
   els.status.textContent = "";
   els.postMeta.textContent = "Creating...";
+  const payload = {
+    title: els.postTitle.value,
+    body: els.postBody.value,
+  };
+  const customDate = datetimeLocalToISO(els.postCreatedAt.value);
+  if (customDate) {
+    payload.created_at = customDate;
+  }
   const res = await fetch("/api/posts", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title: els.postTitle.value, body: els.postBody.value }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "unknown error" }));
@@ -49,6 +72,9 @@ async function createPost() {
   state = await res.json();
   selectedBubbleVersionId = null;
   els.postMeta.textContent = `Post created: ${state.post.id}`;
+  els.postCreatedAt.value = "";
+  els.postAdvanced.style.display = "none";
+  await loadPostList();
   renderAll();
 }
 
@@ -63,14 +89,19 @@ async function addComment() {
     return;
   }
   els.status.textContent = "Adding...";
+  const payload = {
+    author: { id: "demo-user", display_name: els.authorName.value || "You" },
+    text,
+    reply_to_comment_id: null,
+  };
+  const customDate = datetimeLocalToISO(els.commentCreatedAt.value);
+  if (customDate) {
+    payload.created_at = customDate;
+  }
   const res = await fetch(`/api/posts/${state.post.id}/comments`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      author: { id: "demo-user", display_name: els.authorName.value || "You" },
-      text,
-      reply_to_comment_id: null,
-    }),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: "unknown error" }));
@@ -79,6 +110,8 @@ async function addComment() {
   }
   state = await res.json();
   els.commentText.value = "";
+  els.commentCreatedAt.value = "";
+  els.commentAdvanced.style.display = "none";
   els.status.textContent = "Added.";
   if (!selectedBubbleVersionId) {
     const latest = latestBubbleVersionByCreatedAt(state.bubble_versions);
@@ -121,12 +154,14 @@ function renderComments() {
   }
   els.commentFeed.innerHTML = items.map(c => {
     const bubble = c.assigned_bubble_id ? `<span class="pill">bubble: ${esc(c.assigned_bubble_id.slice(0, 8))}</span>` : "";
+    const vote = c.vote ? `<span class="vote-badge vote-${c.vote}">${esc(c.vote)}</span>` : "";
     return `
       <div class="feed-item">
         <div class="meta">
           <span>${esc(c.author?.display_name || "Anon")}</span>
           <span>•</span>
           <span>${esc(fmtTime(c.created_at))}</span>
+          ${vote}
         </div>
         <div class="text">${esc(c.text)}</div>
         <div style="margin-top:8px;">${bubble}</div>
@@ -175,6 +210,9 @@ function renderTimeline() {
     return `<div class="edge" style="left:${left}px;top:${top}px;width:${len}px;transform:rotate(${angle}deg);"></div>`;
   }).join("");
 
+  const commentsById = {};
+  for (const c of (state.comments || [])) commentsById[c.id] = c;
+  
   const bubbleDivs = bvs.map(bv => {
     const p = posPx[bv.id];
     if (!p) return "";
@@ -183,12 +221,27 @@ function renderTimeline() {
     const left = p.x;
     const top = p.y;
     const label = bv.label || "…";
-    const sub = `${bv.comment_ids.length} comment(s)`;
+    const commentCount = bv.comment_ids.length;
+    
+    const votes = { agree: 0, disagree: 0, pass: 0 };
+    for (const cid of bv.comment_ids) {
+      const comment = commentsById[cid];
+      if (comment && comment.vote) {
+        votes[comment.vote] = (votes[comment.vote] || 0) + 1;
+      }
+    }
+    const totalVotes = votes.agree + votes.disagree + votes.pass;
+    const voteSummary = totalVotes > 0 
+      ? `✓${votes.agree} ✗${votes.disagree} ○${votes.pass}`
+      : `${commentCount} comment(s)`;
+    
     const border = isSelected ? "border-color:#94a3b8;" : "";
+    const confidenceColor = bv.confidence > 0.7 ? "#10b981" : bv.confidence > 0.4 ? "#f59e0b" : "#ef4444";
     return `
-      <div class="bubble" data-bvid="${esc(bv.id)}" style="left:${left}px;top:${top}px;min-width:${pxSize}px;${border}">
-        <span>${esc(label)}</span>
-        <span class="sub">${esc(sub)}</span>
+      <div class="bubble" data-bvid="${esc(bv.id)}" style="left:${left}px;top:${top}px;min-width:${pxSize}px;${border}" title="${esc(bv.essence || label)}">
+        <span class="bubble-label">${esc(label)}</span>
+        <span class="sub">${esc(voteSummary)}</span>
+        <span class="sub" style="font-size:10px;opacity:0.7;">conf: ${bv.confidence.toFixed(2)}</span>
       </div>
     `;
   }).join("");
@@ -228,18 +281,37 @@ function renderInspector() {
   const repHtml = reps.length ? reps.map(c => renderCommentCard(c)).join("") : `<div class="muted">No representatives.</div>`;
   const allHtml = all.length ? all.map(c => renderCommentCard(c)).join("") : `<div class="muted">No comments.</div>`;
 
+  const votes = { agree: 0, disagree: 0, pass: 0 };
+  for (const cid of bv.comment_ids) {
+    const comment = commentsById[cid];
+    if (comment && comment.vote) {
+      votes[comment.vote] = (votes[comment.vote] || 0) + 1;
+    }
+  }
+  const totalVotes = votes.agree + votes.disagree + votes.pass;
+  const voteSummary = totalVotes > 0 
+    ? `<div class="vote-summary">
+         <span class="vote-badge vote-agree">✓ ${votes.agree} agree</span>
+         <span class="vote-badge vote-disagree">✗ ${votes.disagree} disagree</span>
+         <span class="vote-badge vote-pass">○ ${votes.pass} pass</span>
+       </div>`
+    : "";
+
   els.inspector.innerHTML = `
     <div>
       <div class="pill">bubble: ${esc(bv.bubble_id.slice(0, 8))}</div>
-      <div class="pill">confidence: ${esc(bv.confidence.toFixed(2))}</div>
+      <div class="pill" style="background: ${bv.confidence > 0.7 ? 'rgba(16, 185, 129, 0.2)' : bv.confidence > 0.4 ? 'rgba(245, 158, 11, 0.2)' : 'rgba(239, 68, 68, 0.2)'}; border-color: ${bv.confidence > 0.7 ? '#10b981' : bv.confidence > 0.4 ? '#f59e0b' : '#ef4444'};">confidence: ${esc(bv.confidence.toFixed(2))}</div>
+      <div class="pill">${esc(bv.comment_ids.length)} comments</div>
       <div class="pill">window end: ${esc(fmtTime(bv.window?.end_at || bv.created_at))}</div>
     </div>
 
     <h3>Label</h3>
-    <div>${esc(bv.label || "")}</div>
+    <div style="font-weight:600;color:#f3f4f6;">${esc(bv.label || "")}</div>
 
     <h3>Essence</h3>
-    <div style="white-space:pre-wrap;">${esc(bv.essence || "")}</div>
+    <div style="white-space:pre-wrap;color:#d1d5db;">${esc(bv.essence || "")}</div>
+
+    ${voteSummary}
 
     <h3>Representative comments</h3>
     <div class="list">${repHtml}</div>
@@ -250,18 +322,78 @@ function renderInspector() {
 }
 
 function renderCommentCard(c) {
+  const vote = c.vote ? `<span class="vote-badge vote-${c.vote}">${esc(c.vote)}</span>` : "";
   return `
     <div class="list-item">
       <div class="meta">
         <span>${esc(c.author?.display_name || "Anon")}</span>
         <span>•</span>
         <span>${esc(fmtTime(c.created_at))}</span>
-        <span>•</span>
-        <span>${esc(c.id.slice(0, 8))}</span>
+        ${vote}
       </div>
       <div class="text">${esc(c.text)}</div>
     </div>
   `;
+}
+
+async function loadPostList() {
+  try {
+    const res = await fetch("/api/posts/list");
+    if (res.ok) {
+      const data = await res.json();
+      const posts = data.posts || [];
+      
+      els.postSelector.innerHTML = '<option value="">Select conversation...</option>';
+      posts.forEach(p => {
+        const option = document.createElement("option");
+        option.value = p.id;
+        option.textContent = `${p.title} (${p.comment_count} comments, ${p.bubble_count} bubbles)`;
+        els.postSelector.appendChild(option);
+      });
+      
+      if (posts.length > 0 && !state?.post) {
+        els.postSelector.value = posts[0].id;
+        await loadPost(posts[0].id);
+      }
+    }
+  } catch (e) {
+    console.log("Error loading post list:", e);
+  }
+}
+
+async function loadPost(postId) {
+  if (!postId) return;
+  
+  try {
+    const res = await fetch(`/api/posts/${postId}/load`, { method: "POST" });
+    if (res.ok) {
+      state = await res.json();
+      els.postSelector.value = postId;
+      selectedBubbleVersionId = null;
+      renderAll();
+      els.postMeta.textContent = `Loaded: ${state.post.title}`;
+    }
+  } catch (e) {
+    console.log("Error loading post:", e);
+  }
+}
+
+async function loadCurrentState() {
+  try {
+    const res = await fetch("/api/current-state");
+    if (res.ok) {
+      const data = await res.json();
+      if (data.post) {
+        state = data;
+        els.postSelector.value = data.post.id;
+        renderAll();
+        els.postMeta.textContent = `Loaded: ${state.post.title}`;
+      }
+    }
+  } catch (e) {
+    console.log("No existing post");
+  }
+  await loadPostList();
 }
 
 els.createPostBtn.addEventListener("click", () => createPost());
@@ -272,4 +404,24 @@ els.rawToggle.addEventListener("click", () => {
   renderAll();
 });
 
+els.postAdvancedToggle.addEventListener("click", () => {
+  const isVisible = els.postAdvanced.style.display !== "none";
+  els.postAdvanced.style.display = isVisible ? "none" : "block";
+  els.postAdvancedToggle.textContent = isVisible ? "⚙️ Set custom date/time" : "⚙️ Hide date/time";
+});
+
+els.commentAdvancedToggle.addEventListener("click", () => {
+  const isVisible = els.commentAdvanced.style.display !== "none";
+  els.commentAdvanced.style.display = isVisible ? "none" : "block";
+  els.commentAdvancedToggle.textContent = isVisible ? "⚙️ Set custom date/time" : "⚙️ Hide date/time";
+});
+
+els.postSelector.addEventListener("change", async (e) => {
+  const postId = e.target.value;
+  if (postId) {
+    await loadPost(postId);
+  }
+});
+
+loadCurrentState();
 renderAll();

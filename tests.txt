@@ -1,0 +1,847 @@
+Which RTX 5090 model to choose?
+Question
+Hello, I read 20+ reviews on these three rtx 5090s non reference cards
+
+MSI RTX 5090 SUPRIM SOC
+
+ASUS ROG Astral RTX 5090 OC
+
+GIGABYTE AORUS RTX 5090 MASTER
+
+And I simply can't decide between them, which one should I pick,
+
+I currently own an rtx 4090, more specifically MSI RTX 4090 Suprim X and it's a fantastic card, been using it for almost 2 years now, haven't had any issue and according to one completely disassembly teardown it uses some very high grade and quality panasonic caps and vrms and I absolutely love the sleek, stylish and kinda stealtty look of it.
+
+But when I read a few reviews on the new MSI RTX 5090 SUPRIM SOC I noticed right away they changed some of the design, that wouldn't be an issue, but the included anti sag stand isn't made out of solid aluminium anymore, but some sort of cheap plastic. Even that I could chew through really, but supposedly they didn't change the 12V-2x6 connector and it's still upside down like it was with my the rtx 4090 suprim x card that I currently have. So this time around, in preparation for the graphics card upgrade I bought a Seasonic Native 12V-2×6 90° Cable - https://seasonic.com/native-12v-2x6-cable-90-degrees/
+
+And I bought it for the very purpose so I can route the cable under the card and not have it touch the side panel of my case like I have now that Iam using still with the older psu along with the atrocious adapter that came with the rtx 4090 suprim x card...
+
+But out of all these three non reference cards only the one from MSI has this upside down 12V-2x6 connector
+
+Then there is the ASUS ROG Astral RTX 5090 OC,. This one looks the best out of them all, even though the 4th fan is a gimmick really according to several reviews, and it uses basically the same cheap plastic anti sag stand. But it looks to be the best version according to all the reviews I read through, the best designed pcb, really high quality full metal shroud and achieves the best overclocks aswell,
+
+But the main issue is that it is ASUS, and they are well known to be really pain in the ass when it comes to RMA process. I know about it I have been through it several times with my older, very expensive three times RMA'd ultrawide monitor that is now dead, because the cost of the repair was astronomically and comically so high I made a decision to buy a brand new QD oled 4K monitor instead and it was still by almost 900 euros cheaper than getting it fixed. It's a long story,
+
+If anyone is interested, It's here it was RMA'd a total of three times, Long story short, the first RMA was due to the cracked screen due to a stupid sibbling throwing a water bottle cap at me and it hit and cracked the screen, I paid 1300 euros for the repair at the time, the swapped the panel, cracked screen and the cracked frame , Then the second rma was much less expensive, because of the broken back side joystick nipple that controls the OSD, it was only around 30 euros, but after a while during spring of last year it started to have this weird problems of the panel starting to degrade, on the top right corner I noticed quite a lot of simmering lines and artefacts, at first I thought the cable was going bad, but nope on almost the first summer day it completely flashed white, the entire screen and then went black and suddenly no picture was on, only a white backlight was visible and when I send it to the RMA for third time, they wanted to charge me 2400 euro for the entire repair of the whole panel because the warranty for the last repair bascally expired only a few days after it happened. Just my luck. It was almost as much as I paid for it in 2019 which was 2700 euros and it was then I decided not to go through and only pay for the return shipping and buying a completely new monitor. This was my somewhat unlucky and terrible experience with asus support.
+
+So I have a few doubts at the back of my mind because of my experience with the asus support and RMA process.
+
+And then there is the The GIGABYTE AORUS RTX 5090 MASTER, which again has the correctly positioned 12V-2x6 connector, but supossedly Gigabyte use composite metal grease(not liqiud metal) on Aorus Master and ball bearing fan and they downgraded from R15(little to no whine on 4000 series) to R10 chokes which are prone to whine.
+
+https://forums.overclockers.co.uk/threads/5080-5090-coil-whine-thread.18998069/page-8#post-37632255
+
+But I really like the look of the aorus card, especially the include anti sag bracket is a much higher quality one than what msi and asus has, but the issues posted on overlcockers forum makes me ignore this card completely,
+
+On top of it not a lot of reviews are out for this particular model, which is really bothersome, that after almost 2 weeks after the original launch there are almost no reviews. I only found one here
+
+https://www.eteknix.com/aorus-geforce-rtx5090-master-ice-32g-graphics-card-review/
+
+And the review is really shallow, doesn't go really into any depth when it comes to it's inernals, used components and pcb design.
+
+What are you thoughts? Please help decide
+
+*EDIT
+
+I just noticed there are upside down 90 angle cables from corsair specifially designed for the MSI cards of rtx 5090s
+
+https://www.corsair.com/us/en/p/pc-components-accessories/cp-8920352/corsair-psu-90-12v-2x6-style-b-cable-cp-8920352?srsltid=AfmBOopCuLsXjE974EbBy-inHJNm-OvmyNdPvIAKbhkapYAjeSspu86j
+
+and according to their article
+
+https://www.corsair.com/us/en/explorer/diy-builder/power-supply-units/corsair-12v-2x6-90-degree-angled-gpu-power-cable/
+
+They can be used on any PSUs Brand there available unless it has the native 12V-12x6 connector
+
+I currently have the Seasonic Prime TX-1600 Noctua Edition and I bought the https://seasonic.com/native-12v-2x6-cable-90-degrees/ cable so I can route it under the rtx 5090, but it can only be used with the asus and gigabyte cards, Because MSI cards have the connector upside down, For that I need to get he aformentioned 90° angle cable B variant from corsair, but that one is out of stock everywhere, LOL.
+
+*edit 11.3.2025
+
+So today I recevied two email notifications about the availability of the aorus master that it willl be available to pick up on 12th march in the store. So i might actually go for this one, despite the various troubles some users are having.
+
+I rather go for astral, but the availablity is still non existent even now at the start of march. Whats more troubling all the asus rtx 5090 cards in the stores have no sooner availability than at the end of april and even then it will be few pieces.
+
+*edit 14.3.2025
+
+So I managed to pick up the rtx 5090 phantom gs from gainward, but promptly returned it, because it had terribly loud coil whine and on top of it, it cost 3219 eur, astral was "only" 280 euro more expensive.
+And the phantom gs had terrible performance and temps, over 80°C when gaming
+
+But the next day the rtx 5090 astral OC version was available to pick up from a different store and I could not have been more happier, so I returned the gainward card and picked up this beauty and it's reaching max 63°C under max utilization and the oc performance is incredible, even without undervolting thecard I can overclock the core to 2902 MHz and memory to 29900 Mhz, It's stable as a rock. And even with overlclock the fans barely go above 45% and temps are 65°C and if I ramp up the fans to 100% the temps under max utilization the temps are well bellow 50°C...unbelievable, but the card then sounds like a jet engine
+
+Archived post. New comments cannot be posted and votes cannot be cast.
+
+Upvote
+0
+
+Downvote
+
+86
+Go to comments
+
+
+Share
+Sort by:
+
+Best
+
+Search Comments
+Expand comment search
+Comments Section
+u/Fantastic-Entry4906 avatar
+Fantastic-Entry4906
+•
+1y ago
+RTX5090 SUPRIM | 9950X3D
+Man dreaming, do not wake him up
+
+
+
+Upvote
+34
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Iam not dreaming at all, just wanted to ask opinions of other fellow enthusiasts. It's more than obvious the stock is pretty much non existent, but in 2 months time they will be available.
+
+
+
+Upvote
+6
+
+Downvote
+
+u/b4db0 avatar
+b4db0
+•
+1y ago
+•
+Edited 1y ago
+I’m in the same boat got rid of my 4090 (Palit Omniblack) and I’m looking a ‘premium’ 5090. I’m leaning towards the Aorus Master as I prefer the aesthetics the most. Wouldn’t listen to anyone making a fuss over it, it’s your money and it’s just jealousy lol
+
+
+
+Upvote
+4
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+That makes two of us buddy, are you from EU?
+
+I got rid of my rtx 4090 msi suprim x for a decent price, considering it had only 13 months left on the warranty I was very happy to get 2100 euro for it, I paid 2069 euro back in march 2023
+
+
+
+Upvote
+3
+
+Downvote
+
+u/b4db0 avatar
+b4db0
+•
+1y ago
+That’s a great price you got for it! I sold by Palit card for 1800 GBP, I’m in Northern Ireland. I’m doubting the 5090s at this point it’s insane what’s wrong with them considering the price
+
+
+Upvote
+1
+
+Downvote
+
+More replies
+Sh4kki
+•
+7mo ago
+I paid 1305 for my zotac white 4090. Sold it now for 1900 and bought a 5090 for 2,3. Easiest choice 
+
+
+Upvote
+1
+
+Downvote
+
+Kpop_Prince_
+•
+8mo ago
+Nope
+
+
+Upvote
+0
+
+Downvote
+
+u/Vatser avatar
+Vatser
+•
+1y ago
+Wait, we get to choose? I thought it chooses us.
+
+
+Upvote
+40
+
+Downvote
+
+[deleted]
+•
+1y ago
+Do you really need a 5090 right now? Your 4090 is the second-fastest consumer GPU in the world. So, you're not missing out.
+
+I would wait until 5090 stocks and prices normalize (to the extent possible). There is no need to overspend, even for a 5090.
+
+
+
+Upvote
+17
+
+Downvote
+
+XXLpeanuts
+•
+1y ago
+7800x3d, INNO3D 5090, 32gb DDR5 Ram, 45" OLED
+Are we thinking pricing is going to normalise? I don't think 2025 is going to get more stable.....
+
+
+
+Upvote
+4
+
+Downvote
+
+[deleted]
+•
+1y ago
+Stock will definitely improve, and demand will most likely decline as people buy more 5090s at these ridiculous prices, which will stabilize prices. Prices are this high because people are buying. But, as soon as people stop buying, they will deflate.
+
+The current hype is artificial. Demand is not as great as they make it seem. They just didn't have enough supply for the few who really can afford these pumped up prices. Had they produced an adequate number of units, they would be sitting in store shelves like the 4080 did at launch and long thereafter.
+
+
+
+Upvote
+4
+
+Downvote
+
+XXLpeanuts
+•
+1y ago
+7800x3d, INNO3D 5090, 32gb DDR5 Ram, 45" OLED
+5080s seem to be in stock in the UK as no one wants one and yet prices increase it seems. But yea generally it's how it works, I just don't see official store prices dropping much. Yea so much talk about them being out of stock as if that means thousands of people are buying them at inflated prices. They are not, each stores had like 5 cards for sale and went out of stock instantly. Demand is probably quite low.
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Completely agree, thank you for a informative comment.
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Yeah I wonder ever do that, I never buy new graphics card from those odious scalpers, never have and never will. Iam waiting for the restock and according to the info from my local hw store it is due in late march or mid april.
+
+
+Upvote
+1
+
+Downvote
+
+u/Rogue_M4ge avatar
+Rogue_M4ge
+•
+1y ago
+Whichever one pops up in-stock first, and you can beat the bots to.
+
+
+
+Upvote
+14
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+LOL, yeah, all of the cards are delayed to almost late march or mid april...damn
+
+
+Upvote
+1
+
+Downvote
+
+u/Zombot0630 avatar
+Zombot0630
+•
+1y ago
+RTX 5090 FE | 9800X3D | 64GB DDR5 6000
+It sounds like you have your heart set on the Astral, which would be a fine choice. Your RMA experience with ASUS is obviously concerning though. I’ve owned plenty of MSI and Gigabyte products with no issues - my last MB was a Gigabyte.
+
+That being said, stock is so supremely low right now I wouldn’t obsess about which AIB to choose from. My 4090 was a Zotac, a brand everyone shit on when I bought it in 2022, but it was a wonderful card. I would get whichever you see in stock.
+
+
+
+Upvote
+4
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Thank you for the kind and knowledgeable reply, a rarity on reddit these days.
+
+Obviously the stock is non existent, I have ordered all three cards, but the expected restock is due to late march, mid april, so plenty of time to rethink which one, Iam basically more inclined to take the gigabyte aorus one, especially when I had bad asus rma experneices before and the msi one is still in contention, but as I said, more inclined to take the aorus master.
+
+
+Upvote
+1
+
+Downvote
+
+u/greeny1greeny avatar
+greeny1greeny
+•
+1y ago
+You don’t have a choice unless you’re paying resale. Idk why people act like they wouldn’t take the worst 5090 if it was in stock.
+
+
+
+Upvote
+6
+
+Downvote
+
+Acegickmo
+•
+1y ago
+Because you’re potentially wasting a ton of extra money on a worse card? The difference between certain cards is literally 1k
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Exactly this, from my past experiences with cheaper versions of cards I would never go that route again
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+From my past experiences, the extra money is worth it if you want a stable oc card with great temps and performance.
+
+
+Upvote
+1
+
+Downvote
+
+Entire-Signal-3512
+•
+10mo ago
+I personally wouldn't take the worst 5090. I waited and watched until I was able to get the card I wanted. Who wants to have an ugly/loud card for the next 2.5 years or so? Well worth the wait imo
+
+
+Upvote
+1
+
+Downvote
+
+KurupiraMV
+•
+1y ago
+The one you find to buy. There is no stock at all, as soon the replacement arrive, it vanishes.
+
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Yep, according to the local mortar electronics store, the restock is due to late march to mid april.
+
+
+Upvote
+1
+
+Downvote
+
+u/spoonypizza avatar
+spoonypizza
+•
+10mo ago
+Amazing thread. Had me bouncing back and forth between cards but will bite the bullet and stick with my Aorus order and hope for the best.
+
+I did consider switching to the Astral. As youve clearly done more research than i have... Which would you recommend - the LC or non LC version?
+
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+10mo ago
+Hi, so the story actually changed quite a bit, I managed to pick up phantom gs from gainward for 3219 euro, but promply returned it as it had loud coil whine and the card was also pretty loud under load with its fans on 60%, roughly 1200 rpm, , they were cooling the card to 75°C, but it was loud and I kinda looked the stealth look of the card.
+
+And an opportunity arose and I managed to snag an astral oc for 3499 euro and so I did and I've been enjoying it very much, such a quiet card even under heavy load, looks so awesome with the black alumunium shroud and is an oc monster I managed to oc its core with +1319 mhz, with a bit of undervolting. Beast.
+
+But you wouldn't go wrong with the aorus master, that was my main card to go for, but things changed.
+
+
+
+Upvote
+1
+
+Downvote
+
+u/Hackfraysn avatar
+Hackfraysn
+•
+9mo ago
+How is the coil whine on your Astral?
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+9mo ago
+hi, it's pretty much non existent, even uner 99% load
+
+
+Upvote
+1
+
+Downvote
+
+u/ARealTrashGremlin avatar
+ARealTrashGremlin
+•
+8mo ago
+Go msi vanguard or trio, they have the best thermals of all the non watercolooled 5090s and cost less than the asus/gigabyte
+
+
+Upvote
+2
+
+Downvote
+
+Ocisly914
+•
+1y ago
+Choose the one you can get. There’s no option at all.
+
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Well obviously not right now, but in 2 months time it will be.
+
+
+Upvote
+1
+
+Downvote
+
+u/Godbearmax avatar
+Godbearmax
+•
+1y ago
+Astral is the most expensive and the loudest one so certainly not the Astral. The 4. fan there is a disaster. Otherwise they can ALL have coil whine. Someone in another forum posted pretty heavy coil whine on his Suprim....so it certainly isnt only the Aorus. Can happen to any card. At least put your case on the ground far away so you wont notice it too much :D
+
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Thank you for your comment, informative and to the topic, much rare these days in here.
+
+Yeah I heard about some kind of issues with the 4th fan having some kind of wind inerference or turbulence or whatever iti called when the 3rd and 4th fan are at the same rpm causing this weird loud humming noise
+
+Iam more inclined towards the aorus master from gigabyte though, I like the looks, but the issues I read about it really bother me, hopefully I"ll get a nice sample.
+
+
+
+Upvote
+1
+
+Downvote
+
+u/Godbearmax avatar
+Godbearmax
+•
+1y ago
+Yeah I have the Aorus now. Good looking card but difficult to cool. You need good airflow and if you want to usw the silent bios and stay under 1300rpm you probably wont be able to use power target 100%. I am good with PT 80 atm
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+nice one, where did you manage to snag that card?
+
+
+
+Upvote
+1
+
+Downvote
+
+u/Godbearmax avatar
+Godbearmax
+•
+1y ago
+Well it was from Mindfactory, Germany. One of those 5-10 cards drops and gone in under maybe 15 seconds.
+
+
+Upvote
+1
+
+Downvote
+
+More replies
+r4plez
+•
+1y ago
+Best thing is you aint getting any of it for feesable future
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+a restock is due to late march to mid april according to the orders on my local electronics store.
+
+
+Upvote
+2
+
+Downvote
+
+Entire-Signal-3512
+•
+10mo ago
+Idk if you got your card yet. But perhaps I can help with your choice.
+
+I want to address the Asus RMA stuff 1st. I was having issues with the q slim pcie slot on my x870e Strix e-e. I reached out to CS via the Asus website. Long story short, they sucked. I then made a post on the ROG forms about the issue. I had an Asus rep DM asking if he could help. I gave him my information and he read the chats I had with the CSR from Asus website (didn't have to explain myself again, which was nice) he then offered to send the motherboard back and get a full refund for the price I paid. All I needed to do was show proof of purchase.
+
+Having that experience with Asus CS at least on reddit gave more confidence in the brand in general. Though this is just my own experience. I know others have been out through hell. So YMMV
+
+As for the 5090 choice. I managed to get the Asus Astral 5090. It's a beautiful card, boosts high, good temps and it's the best built card I've ever owned, by a long shot. The astral card was my 1st choice and I'm stoked that I managed to get one.
+
+I did actually own an Aorus master 4090. The card had the absolute best cooling. The issue with gigabyte stuff (in my experience) is that the brand just tends to cheap out on stuff. The LCD screen on my 4090 Aorus master had so many issues and then after 5 months or so it just died (this also happened on my 3070 Aorus master) the card also just kinda looked cheap. Ugly plastic everywhere.
+
+I've seen a fair amount of reports on the Aorus master 5090 that there is a lot of fan rattle. The last thing you want is to drop a huge amount of cash on a "premium" 5090 and have it sound worse than a MSI Ventus.
+
+Anyways, that's my experience and feedback on the subject. Hope it helps. Good luck getting your GPU!
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+10mo ago
+Hello,
+
+nope still waiting, ordered at the end of january through various retailers and eshops, but only one sent me an email that the card will be available on april 3rd, its the gigabyte aorus one
+
+Thats nice you managed to get an attention of asus rep on their forums, but I did not, nobody responded to my rog forums thread I made a few years ago :( Are you from EU or America?
+
+I envy you, the astral card is the best looking out of all of them and is a great performer in terms of oc and cooling, but the availability is zero still unfortunately.
+
+I own a motherboard from gigabyte, the aorus master z 790 and have had zero issue with it so far, had it for 3 years now almost. ALso bought last year the aorus FO32UP 4K 240 hz qd oled and zero issues with it aswell, it's a wondeful monitor. And over the years I had various graphics cars from gb, to be specific, two gtx 670s and 970s and one 980ti and no problems with neither of them aswell.
+
+I myself too read about those issues with fan rattling due to cheap ball bearings in the fans themselves on the aorus rtx 5090 master. But it is the only card that has a less than a month availability out of all the three I mentioned in the thread. Personally I would want the msi one, since I own an rtx 4090 suprim soc from msi and its a sleek, stylish card and performs well even under max utilization only reaches about 64 °C . But I wouldn't say no to the astral card from asus either, especially since your praise and personal experience with it.
+
+DO you have by any chance photos of your case, how it looks with the rgb. Also what about the noise, I heard the position of the 4th fan mounted on the top has this werid issue with air turbulunce noise.
+
+Thank You for your very informative and thought out reply
+
+
+
+Upvote
+2
+
+Downvote
+
+Entire-Signal-3512
+•
+10mo ago
+Sorry I guess I should have been more clear. I was on the ROG subreddit. That's where the Asus rep DMed me here on reddit. I'm located in America.
+
+It's funny that we've had very different experiences with the gigabyte stuff. Though I did have a x670e Aorus Xtreme motherboard that was really nice. I think the biggest pain point when it comes to gigabyte is how awful the software is. What's funny is that Armoury crate use to be the worst. But the last year I've used it, I haven't had any issues with it. Works quite well.
+
+I was looking into the fan issue with Aorus 5090s. There was a post where some guy took it apart. And it was actually the frame underneath the fan that would cause the clicking sound. So when the fan would start to slow down, that's what caused the clicking sound. That really doesn't give me confidence in the card being well built. A cheap fan is one thing. But the fact that it's the frame causing the issue, is a pretty big concern (for me anyways) it's a shame because the Aorus does look pretty cool, it's my 3rd favorite I would say.
+
+As for fan noise on the Astral. There was a Vbios update for the quiet mode that addressed the issue. The fans can get loudish in performance mode. But that can be fixed using the Asus tweak 3 software. You just lower fan 2 by a little and it's way better. Though even without that, I don't think it's unbearable whatsoever.
+
+I loves the Suprim cards for 30 and 40 series. I feel like 50 series was a bit of a let down, looks wise anyway. The backplate just looks far too plain for my taste..the light says "Suprim" looks really cheap imo. The little diamond in the corner of the card looks great though. I had a 5080 Suprim and ran really well. I returned it though once I got my Astral.
+
+I haven't taken any good photos of the card yet. But I'll post the 1 I do have
+
+Comment Image
+
+
+Upvote
+2
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+10mo ago
+used to have armory crate due to having a mouse from asus, never again, bought two of them, both had the same problem after a while with the scroll wheel sensor. I have the GCC, gigabyte control center and I use it to control my monitor osd, the lighting of the board and updating bios even, fine software, although sometimes it doesn't load the settings of the lightin, but even the icue corsair software doesnt at times, bugs out, especially the rams...
+
+Thank you very much for researching the issue, you saved me a ton of time, that means I either go for the astral or the suprim now, the gigabyte one is out of the question, I don't want to spend 3000+ euros for a card that will give me headaches.
+
+And thank you for the info about the weird turbulence issue on the astral, glad they fixed it, a simple fix was proposed by one tech youtube channel that if you set different rpm for the top 4th fan and the 3rd fan on the bottom then the turbulence noise is gone.
+
+That is one sweet fricking system, I see you're a fan of blue, just as me :D
+
+I also read that the lightbar on the astral cant be changed,at all, is it true?
+
+Anyway here is my system https://i.imgur.com/M67R9cW.jpeg soon to be upgraded with either astral or suprim rtx 5090 hopefully.
+
+
+
+Upvote
+1
+
+Downvote
+
+Entire-Signal-3512
+•
+10mo ago
+Yeah the fan noise isn't really an issue for me, even before adjusting the fan speed for the 4th fan.
+
+As for the light bar, you can fully control it in the AC software, so no worries there. The light bar looks really nice imo and it's very nicely diffused.
+
+And yeah, that's what made me forget even considering the Aorus master card. Not going drop 3k for a card that has such alarming build quality.
+
+Also the fact alone that you can see how many amps are going through each pin on the 12vhpwr cable via the GPU tweak software is reason enough for me to make the astral the go to card. Don't have to worry about if there are any issues with the connection of it. Which is great peace of mind.
+
+
+Upvote
+2
+
+Downvote
+
+More replies
+u/shyahone avatar
+shyahone
+•
+1y ago
+none
+
+
+Upvote
+0
+
+Downvote
+
+Traditional-Mud-3255
+•
+1y ago
+https://www.umart.com.au/product/asus-rog-astral-geforce-rtx-5090-oc-32g-gaming-graphics-card-rog-astral-rtx5090-o32g-gaming-81415
+
+
+Upvote
+0
+
+Downvote
+
+[deleted]
+•
+1y ago
+I just got the FE while trading in my 4090 + cash, some people are willing to take this deal
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+Interesting trade, may I ask how much extra cash you paid for the rtx 5090 FE? How are the temps and noise though? And are you from Europe?
+
+
+Upvote
+1
+
+Downvote
+
+u/muzaffer22 avatar
+muzaffer22
+•
+1y ago
+RTX 5080
+Cheapest one you can find, all of them are good.
+
+
+
+Upvote
+1
+
+Downvote
+
+SlayerII
+•
+1y ago
+I fail at "you can find"
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+1y ago
+the price difference between the "cheapest" ones and the ones I mentioned is literally just 250 euros less, so its a no brainer for me
+
+For example the aorus master from gigabite is 3199 euros and the windforce version is 2949 euros
+
+
+Upvote
+1
+
+Downvote
+
+u/SheepherderDistinct2 avatar
+SheepherderDistinct2
+•
+10mo ago
+There is ONE card faster than all of them and it’s the gigabyte waterforce xtreme. It is in fact so rare you can barely if not at all find any videos about it but I somehow got my hands on it. I can confirm it is in fact the fastest rtx 5090 out there
+
+
+
+Upvote
+1
+
+Downvote
+
+u/M4t087 avatar
+M4t087
+OP
+•
+10mo ago
+How much can you push the limits of the card, how big is the manual oc on it?
+
+
+Upvote
+1
+
+Downvote
+
+u/NefariousnessSalt236 avatar
+NefariousnessSalt236
+•
+9mo ago
+•
+Edited 9mo ago
+Personally, I would rather choose the ROG Astral, because it is beautiful and very efficient. I think it is the most powerful of all (even though I don't know much about recent 5090s, and I come to talk about 5090 while I have an old 1070 ROG! But yes, I plan to change it and use the Astral). Apparently, the ROG Astral can be noisy, and personally, I will disassemble it to install a watercooling of at least 420 mm, which will allow me to have much less noise and better performance, because it is well known that watercooling is much better than fans. Then there is also the price which will surely increase, because to have a cost-effective 5090 graphics card cooling, you need at least 420 mm or 360. You will have to do a custom watercooling if you want the best performance, I think :)

@@ -11,9 +11,12 @@
     <header class="header">
       <div class="header-left">
         <h1>Comment Bubbles MVP</h1>
-        <div class="muted">Dummy showcase: deterministic mock embeddings + labeling</div>
+        <div class="muted">GPT-powered comment clustering and labeling</div>
       </div>
       <div class="header-right">
+        <select id="postSelector" class="post-selector" style="margin-right: 12px;">
+          <option value="">Select conversation...</option>
+        </select>
         <button id="rawToggle" class="btn">Raw mode: Off</button>
       </div>
     </header>
@@ -26,6 +29,15 @@
           <input id="postTitle" type="text" value="Demo: Comments → Bubbles Over Time" />
           <label>Body</label>
           <textarea id="postBody" rows="3">Try adding comments that mix different themes. Click bubbles to drill into the clustered comments.</textarea>
+        </div>
+        <div class="advanced-toggle">
+          <button type="button" id="postAdvancedToggle" class="btn-link">⚙️ Set custom date/time</button>
+        </div>
+        <div id="postAdvanced" class="advanced-section" style="display: none;">
+          <div class="grid">
+            <label>Created At</label>
+            <input id="postCreatedAt" type="datetime-local" />
+          </div>
         </div>
         <div class="row">
           <button id="createPostBtn" class="btn primary">Create Post</button>
@@ -43,6 +55,15 @@
             <input id="authorName" type="text" value="You" />
             <label>Comment</label>
             <textarea id="commentText" rows="4" placeholder="Write a comment..."></textarea>
+          </div>
+          <div class="advanced-toggle">
+            <button type="button" id="commentAdvancedToggle" class="btn-link">⚙️ Set custom date/time</button>
+          </div>
+          <div id="commentAdvanced" class="advanced-section" style="display: none;">
+            <div class="grid">
+              <label>Created At</label>
+              <input id="commentCreatedAt" type="datetime-local" />
+            </div>
           </div>
           <div class="row">
             <button id="addCommentBtn" class="btn primary">Add Comment</button>

@@ -37,6 +37,7 @@ class Comment(BaseModel):
 
     assigned_bubble_id: Optional[str] = None
     assigned_bubble_version_id: Optional[str] = None
+    vote: Optional[Literal["agree", "disagree", "pass"]] = None
 
 
 class Bubble(BaseModel):
@@ -106,12 +107,15 @@ class PostState(BaseModel):
 class CreatePostRequest(BaseModel):
     title: str
     body: str
+    created_at: Optional[str] = None
 
 
 class AddCommentRequest(BaseModel):
     author: Author
     text: str
     reply_to_comment_id: Optional[str] = None
+    created_at: Optional[str] = None
+    embedding: Optional[Embedding] = None
 
 
 class PipelineClusterDecision(BaseModel):

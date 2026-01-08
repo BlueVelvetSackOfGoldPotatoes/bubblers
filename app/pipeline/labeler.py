@@ -1,34 +1,27 @@
 from __future__ import annotations
 
 import math
-import re
+import os
 from dataclasses import dataclass
 from typing import Dict, List, Sequence, Tuple
 
+from dotenv import load_dotenv
+from openai import OpenAI, APIError, APIConnectionError, APITimeoutError
+
 from app.models import BubbleVersion, Comment
 
-
-_STOPWORDS = {
-    "a","an","the","and","or","but","if","then","else","when","while","of","to","in","on","for","with","as","at",
-    "by","from","is","are","was","were","be","been","being","it","this","that","these","those","i","you","he","she",
-    "they","we","me","him","her","them","us","my","your","our","their","mine","yours","ours","theirs","not","no",
-    "do","does","did","doing","done","can","could","should","would","will","just","so","very","really","about",
-    "what","which","who","whom","why","how","also","too","more","most","some","any","all","many","much","few",
-}
-
-
-_TOKEN_RE = re.compile(r"[a-z0-9]+")
+load_dotenv()
 
 
 @dataclass(frozen=True)
 class LabelerConfig:
-    mode: str = "mocked"
+    mode: str = "live"
     max_representatives: int = 5
 
 
-class MockLabeler:
+class GPTLabeler:
     """
-    Deterministic labeler for demo use.
+    GPT-based labeler for generating bubble labels and essences.
 
     Args:
         config: LabelerConfig controlling representative count.
@@ -39,29 +32,82 @@ class MockLabeler:
 
     def __init__(self, config: LabelerConfig) -> None:
         self._config = config
+        api_key = os.getenv("GPT_KEY")
+        if not api_key:
+            raise ValueError("GPT_KEY not found in environment variables")
+        self._client = OpenAI(api_key=api_key)
 
     def label(self, bubble_version: BubbleVersion, comments_by_id: Dict[str, Comment]) -> Tuple[str, str, float, List[str]]:
         comments = [comments_by_id[cid] for cid in bubble_version.comment_ids if cid in comments_by_id]
         rep_ids = self._choose_representatives([c.id for c in comments])
         rep_texts = [comments_by_id[cid].text for cid in rep_ids if cid in comments_by_id]
-        keywords = self._top_keywords(rep_texts if rep_texts else [c.text for c in comments], k=3)
+        
+        if not rep_texts:
+            return "Miscellaneous", "No comments available.", 0.0, []
 
-        if keywords:
-            label = " / ".join(w.title() for w in keywords)
-        else:
+        total_text_length = sum(len(t) for t in rep_texts)
+        if total_text_length > 4000:
+            rep_texts = rep_texts[:3]
+        
+        comments_text = "\n\n".join(f"Comment {i+1}: {text}" for i, text in enumerate(rep_texts))
+        
+        prompt = f"""Analyze the following comments and provide:
+1. A concise label (2-4 words, use " / " to separate multiple topics)
+2. A brief essence (1-2 sentences describing what people are discussing)
+
+Comments:
+{comments_text}
+
+Respond in this exact format:
+LABEL: [your label here]
+ESSENCE: [your essence here]"""
+
+        label = "Miscellaneous"
+        essence = "People are discussing various topics."
+        
+        try:
+            response = self._client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that analyzes comment clusters and generates concise labels and summaries."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=200,
+            )
+            
+            result = response.choices[0].message.content or ""
+            
+            for line in result.split("\n"):
+                line = line.strip()
+                if line.upper().startswith("LABEL:"):
+                    label = line[6:].strip()
+                elif line.upper().startswith("ESSENCE:"):
+                    essence = line[8:].strip()
+            
+            if not label:
+                label = "Miscellaneous"
+            if not essence:
+                essence = "People are discussing various topics."
+                
+        except (APIError, APIConnectionError, APITimeoutError) as e:
             label = "Miscellaneous"
+            essence = f"Error generating label: {type(e).__name__}"
+        except Exception as e:
+            label = "Miscellaneous"
+            essence = "People are discussing various topics."
 
-        if len(keywords) >= 2:
-            essence = f"People are discussing {keywords[0]} and {keywords[1]}, with related points and reactions."
-        elif len(keywords) == 1:
-            essence = f"People are discussing {keywords[0]}, sharing viewpoints and related details."
-        else:
-            essence = "People are reacting and sharing viewpoints, with multiple loosely related points."
-
+        rep_ids_set = set(rep_ids)
+        comment_ids_set = set(bubble_version.comment_ids)
+        valid_rep_ids = [rid for rid in rep_ids if rid in comment_ids_set]
+        
+        if not valid_rep_ids and rep_ids:
+            valid_rep_ids = list(bubble_version.comment_ids[:min(len(bubble_version.comment_ids), self._config.max_representatives)])
+        
         n = len(bubble_version.comment_ids)
         confidence = min(1.0, math.log(1 + n) / math.log(1 + 10))
 
-        return label, essence, confidence, rep_ids
+        return label, essence, confidence, valid_rep_ids
 
     def _choose_representatives(self, comment_ids: Sequence[str]) -> List[str]:
         if not comment_ids:
@@ -82,17 +128,3 @@ class MockLabeler:
                 seen.add(cid)
                 uniq.append(cid)
         return uniq
-
-    def _top_keywords(self, texts: Sequence[str], k: int) -> List[str]:
-        counts: Dict[str, int] = {}
-        for text in texts:
-            for tok in _TOKEN_RE.findall(text.lower()):
-                if tok in _STOPWORDS:
-                    continue
-                if len(tok) <= 2:
-                    continue
-                counts[tok] = counts.get(tok, 0) + 1
-        if not counts:
-            return []
-        ranked = sorted(counts.items(), key=lambda x: (-x[1], x[0]))
-        return [w for w, _ in ranked[:k]]

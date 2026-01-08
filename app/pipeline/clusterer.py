@@ -9,9 +9,9 @@ from app.utils import cosine_similarity, mean_vector, new_id, now_iso_utc, sha25
 
 @dataclass(frozen=True)
 class ClustererConfig:
-    assign_threshold: float = 0.72
-    embedding_model: str = "mock-embed-v1"
-    embedding_dim: int = 64
+    assign_threshold: float = 0.58
+    embedding_model: str = "text-embedding-3-small"
+    embedding_dim: int = 1536
 
 
 class OnlineClusterer:

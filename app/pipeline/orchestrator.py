@@ -5,17 +5,18 @@ from typing import Dict, Optional, Tuple
 
 from app.models import Bubble, BubbleEdge, BubbleVersion, Comment, PipelineRun, PipelineRunLabeler, PipelineClusterDecision
 from app.pipeline.clusterer import ClustererConfig, OnlineClusterer
-from app.pipeline.embedding import EmbeddingProviderConfig, MockEmbeddingProvider
-from app.pipeline.labeler import LabelerConfig, MockLabeler
+from app.pipeline.embedding import EmbeddingProviderConfig, GPTEmbeddingProvider
+from app.pipeline.labeler import LabelerConfig, GPTLabeler
+from app.pipeline.voter import GPTVoter, VoterConfig
 from app.utils import new_id, now_iso_utc
 
 
 @dataclass(frozen=True)
 class PipelineConfig:
-    assign_threshold: float = 0.72
-    embedding_dim: int = 64
-    embedding_model: str = "mock-embed-v1"
-    labeler_mode: str = "mocked"
+    assign_threshold: float = 0.58
+    embedding_dim: int = 1536
+    embedding_model: str = "text-embedding-3-small"
+    labeler_mode: str = "live"
 
 
 class Pipeline:
@@ -23,7 +24,7 @@ class Pipeline:
     End-to-end pipeline for embedding, clustering, and labeling.
 
     Args:
-        config: PipelineConfig controlling the mock model settings and thresholds.
+        config: PipelineConfig controlling the model settings and thresholds.
 
     Returns:
         Updated store objects plus a PipelineRun record.
@@ -31,9 +32,10 @@ class Pipeline:
 
     def __init__(self, config: PipelineConfig) -> None:
         self._config = config
-        self._embedder = MockEmbeddingProvider(EmbeddingProviderConfig(model=config.embedding_model, dim=config.embedding_dim))
+        self._embedder = GPTEmbeddingProvider(EmbeddingProviderConfig(model=config.embedding_model, dim=config.embedding_dim))
         self._clusterer = OnlineClusterer(ClustererConfig(assign_threshold=config.assign_threshold, embedding_model=config.embedding_model, embedding_dim=config.embedding_dim))
-        self._labeler = MockLabeler(LabelerConfig(mode=config.labeler_mode))
+        self._labeler = GPTLabeler(LabelerConfig(mode=config.labeler_mode))
+        self._voter = GPTVoter(VoterConfig())
 
     def process_new_comment(
         self,
@@ -43,8 +45,14 @@ class Pipeline:
         bubbles_by_id: Dict[str, Bubble],
         bubble_versions_by_id: Dict[str, BubbleVersion],
         next_lane: int,
+        post_title: str = "",
+        post_body: str = "",
     ) -> Tuple[Optional[BubbleEdge], PipelineRun, int]:
-        comment.embedding = self._embedder.embed(comment.text)
+        if not comment.embedding.vector or comment.embedding.dim == 0:
+            comment.embedding = self._embedder.embed(comment.text)
+
+        if post_title and post_body and not comment.vote:
+            comment.vote = self._voter.classify(post_title, post_body, comment.text)
 
         assigned_bubble_id, sim, created_new, _, new_bv, edge, next_lane = self._clusterer.assign(
             post_id=post_id,
@@ -74,7 +82,7 @@ class Pipeline:
                 created_new_bubble=bool(created_new),
             ),
             labeler=PipelineRunLabeler(
-                mode="mocked",
+                mode="live",
                 representative_comment_ids=rep_ids,
             ),
         )
