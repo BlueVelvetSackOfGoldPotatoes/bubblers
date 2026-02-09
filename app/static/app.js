@@ -1,6 +1,7 @@
 let state = null;
 let selectedBubbleVersionId = null;
 let rawMode = false;
+let appConfig = null;
 
 const els = {
   postTitle: document.getElementById("postTitle"),
@@ -423,5 +424,80 @@ els.postSelector.addEventListener("change", async (e) => {
   }
 });
 
+// Chat elements
+const chatCard = document.getElementById("chatCard");
+const chatMessages = document.getElementById("chatMessages");
+const chatInput = document.getElementById("chatInput");
+const chatSendBtn = document.getElementById("chatSendBtn");
+
+async function loadConfig() {
+  try {
+    const res = await fetch("/api/config");
+    if (res.ok) {
+      appConfig = await res.json();
+      const indicator = document.getElementById("modeIndicator");
+      if (appConfig.mode === "llm") {
+        indicator.textContent = "LLM mode \u2014 GPT-powered clustering and labeling";
+        indicator.style.color = "#10b981";
+      } else {
+        indicator.textContent = "Local mode \u2014 sentence-transformers + VADER (no API key)";
+        indicator.style.color = "#f59e0b";
+      }
+      if (appConfig.has_chat && chatCard) {
+        chatCard.style.display = "block";
+      }
+    }
+  } catch (e) {
+    console.log("Error loading config:", e);
+  }
+}
+
+async function sendChatMessage() {
+  if (!state?.post?.id) return;
+  const msg = chatInput.value.trim();
+  if (!msg) return;
+
+  appendChatMessage("user", msg);
+  chatInput.value = "";
+  chatSendBtn.disabled = true;
+
+  try {
+    const res = await fetch(`/api/posts/${state.post.id}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      appendChatMessage("assistant", data.reply);
+    } else {
+      const err = await res.json().catch(() => ({ detail: "Unknown error" }));
+      appendChatMessage("assistant", "Error: " + (err.detail || "Unknown error"));
+    }
+  } catch (e) {
+    appendChatMessage("assistant", "Error: Could not reach server.");
+  }
+
+  chatSendBtn.disabled = false;
+}
+
+function appendChatMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = `chat-message ${role}`;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+if (chatSendBtn) {
+  chatSendBtn.addEventListener("click", sendChatMessage);
+}
+if (chatInput) {
+  chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendChatMessage();
+  });
+}
+
+loadConfig();
 loadCurrentState();
 renderAll();

@@ -11,7 +11,7 @@
     <header class="header">
       <div class="header-left">
         <h1>Comment Bubbles MVP</h1>
-        <div class="muted">GPT-powered comment clustering and labeling</div>
+        <div id="modeIndicator" class="muted">Loading...</div>
       </div>
       <div class="header-right">
         <select id="postSelector" class="post-selector" style="margin-right: 12px;">
@@ -91,6 +91,15 @@
         <div class="card">
           <h2>Bubble Inspector</h2>
           <div id="inspector" class="inspector muted">Create a post and add comments, then click a bubble.</div>
+        </div>
+
+        <div class="card" id="chatCard" style="display: none;">
+          <h2>Chat About This Conversation</h2>
+          <div id="chatMessages" class="chat-messages"></div>
+          <div class="chat-input-row">
+            <input id="chatInput" type="text" placeholder="Ask about the conversation..." />
+            <button id="chatSendBtn" class="btn primary">Send</button>
+          </div>
         </div>
       </section>
     </main>
