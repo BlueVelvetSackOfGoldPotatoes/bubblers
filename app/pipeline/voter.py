@@ -7,6 +7,8 @@ from typing import Literal, Tuple
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from app.pipeline.providers import Voter
+
 load_dotenv()
 
 
@@ -18,7 +20,7 @@ class VoterConfig:
 VoteType = Literal["agree", "disagree", "pass"]
 
 
-class GPTVoter:
+class GPTVoter(Voter):
     """
     Classifies comments as agree, disagree, or pass (neutral) relative to the post.
     

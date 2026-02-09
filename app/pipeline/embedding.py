@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 
 from app.models import Embedding
+from app.pipeline.providers import EmbeddingProvider
 from app.utils import sha256_hex
 
 load_dotenv()
@@ -19,7 +20,7 @@ class EmbeddingProviderConfig:
     dim: int = 1536
 
 
-class GPTEmbeddingProvider:
+class GPTEmbeddingProvider(EmbeddingProvider):
     """
     OpenAI embedding provider using GPT embedding models.
 
@@ -36,6 +37,14 @@ class GPTEmbeddingProvider:
         if not api_key:
             raise ValueError("GPT_KEY not found in environment variables")
         self._client = OpenAI(api_key=api_key)
+
+    @property
+    def dim(self) -> int:
+        return self._config.dim
+
+    @property
+    def model_name(self) -> str:
+        return self._config.model
 
     def embed(self, text: str) -> Embedding:
         if not text or not text.strip():

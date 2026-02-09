@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from openai import OpenAI, APIError, APIConnectionError, APITimeoutError
 
 from app.models import BubbleVersion, Comment
+from app.pipeline.providers import Labeler
 
 load_dotenv()
 
@@ -19,7 +20,7 @@ class LabelerConfig:
     max_representatives: int = 5
 
 
-class GPTLabeler:
+class GPTLabeler(Labeler):
     """
     GPT-based labeler for generating bubble labels and essences.
 
